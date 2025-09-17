@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Тестирование – СРКВТиЭ</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+<header>
+    <div class="logo-wrap">
+        <img src="img/SRKVT.png" alt="Логотип СРКВТиЭ">
+        <h1>Центр тестирования</h1>
+    </div>
+    <button id="themeToggle" title="Сменить тему">🌗</button>
+</header>
+
+<main>
+    <!-- 1. АНКЕТА -->
+    <form id="loginForm" autocomplete="off">
+        <h2>Вход в тестирование</h2>
+        <label for="fio">Фамилия Имя Отчество</label>
+        <input type="text" id="fio" required placeholder="Семенов Александр Александрович">
+
+        <label for="group">Номер группы</label>
+        <input type="text" id="group" required placeholder="37 ВЕБ">
+
+        <label for="course">Выберите курс</label>
+        <select id="course" required>
+            <option value="">-- выберите --</option>
+            <option value="1-2">1–2 курс</option>
+            <option value="3-4">3–4 курс</option>
+        </select>
+
+        <button type="submit">Начать тест</button>
+    </form>
+
+    <!-- 2. КОНКУРС 1 – ОБЫЧНЫЙ ТЕСТ -->
+    <div id="testContainer" class="hidden">
+        <div id="progress">Вопрос <span id="qNum">1</span> из <span id="qTotal">0</span></div>
+        <div class="question">
+            <h3 id="qTitle"></h3>
+            <div class="answers" id="answers"></div>
+        </div>
+    </div>
+
+    <!-- 3. КОНКУРС 2 – МАТЧИНГ-ЛОГОТИПЫ -->
+    <div id="matchContest" class="hidden">
+        <h2>Конкурс 2 – Соотнесите эмблемы учебных заведений СПО г. Ставрополя</h2>
+        <p>Кликните по названию, затем по логотипу (или наоборот). Пару можно менять сколько угодно раз. После нажатия «Готово» система покажет ошибки.</p>
+
+        <div class="match-grid">
+            <div class="match-col">
+                <h3>Названия</h3>
+                <div id="namesCol"></div>
+            </div>
+            <div class="match-col">
+                <h3>Логотипы</h3>
+                <div id="logosCol"></div>
+            </div>
+        </div>
+
+        <button id="matchDone">Готово</button>
+        <div id="matchResult" class="hidden"></div>
+    </div>
+
+    <!-- 4. ЗАГЛУШКИ 3-4-5 (пока пустые) -->
+    <div id="stubContest" class="hidden">
+        <h2>Конкурс <span id="stubNum"></span> – пока заглушка</h2>
+        <p>Через 1 секунду перейдём дальше…</p>
+    </div>
+
+    <!-- 5. ДИПЛОМ -->
+    <div id="resultBox" class="hidden">
+        <h2 id="rTitle"></h2>
+        <p id="rText"></p>
+        <div id="diploma">
+            <h3>Грамота</h3>
+            <p>Настоящим подтверждается, что</p>
+            <p><strong id="dFio"></strong></p>
+            <p>обучающийся(аяся) группы <strong id="dGroup"></strong></p>
+            <p>успешно прошёл(ла) тестирование с результатом <strong id="dScore"></strong></p>
+            <p class="small">Выдано «22» сентября 2025 г.</p>
+        </div>
+        <button onclick="window.print()">Распечатать грамоту</button>
+        <button onclick="location.reload()">Пройти ещё раз</button>
+    </div>
+</main>
+
+<footer>
+    © 2025 Исенгазиев Эльбрус & Шемет Никита. Все права защищены.
+    Данный сайт и его содержание, включая, но не ограничиваясь текстами, изображениями, графикой и дизайном,
+    защищены авторским правом. Запрещается любое использование материалов с данного сайта без предварительного
+    согласования с авторами.
+</footer>
+
+<script src="/js/script.js"></script>
+</body>
+</html>
