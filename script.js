@@ -597,7 +597,7 @@ function nextContest() {
 
 /* ----------  ИТОГОВАЯ ГРАМОТА (после 5-го)  ---------- */
 function showFinalResult() {
-    const totalQuestions = 4 + 6 + 6 + 30 + (userCourse === '1-2' ? 18 : 30);
+    const totalQuestions = 46;          // всего вопросов в любом случае
     const percent = Math.round((score / totalQuestions) * 100) || 0;
 
     dFio.textContent = userFio;
@@ -626,3 +626,4 @@ function showFinalResult() {
     stubContest.classList.add('hidden');
     resultBox.classList.remove('hidden');
 }
+
