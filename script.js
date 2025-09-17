@@ -1,3 +1,28 @@
+/* ======================  ЖДЁМ DOM  ====================== */
+document.addEventListener('DOMContentLoaded', () => {
+
+/* ======================  ЭЛЕМЕНТЫ DOM  ====================== */
+const loginForm   = document.getElementById('loginForm');
+const fio         = document.getElementById('fio');
+const group       = document.getElementById('group');
+const course      = document.getElementById('course');
+
+const testContainer = document.getElementById('testContainer');
+const matchContest  = document.getElementById('matchContest');
+const stubContest   = document.getElementById('stubContest');
+const resultBox     = document.getElementById('resultBox');
+
+const qNum   = document.getElementById('qNum');
+const qTotal = document.getElementById('qTotal');
+const qTitle = document.getElementById('qTitle');
+const answers= document.getElementById('answers');
+
+const dFio   = document.getElementById('dFio');
+const dGroup = document.getElementById('dGroup');
+const dScore = document.getElementById('dScore');
+const rTitle = document.getElementById('rTitle');
+const rText  = document.getElementById('rText');
+
 /* ======================  ТЕМА  ====================== */
 const toggle = document.getElementById('themeToggle');
 const html   = document.documentElement;
@@ -43,7 +68,7 @@ loginForm.addEventListener('submit', e => {
 });
 
 /* ======================  КОНКУРСЫ (объект)  ====================== */
-const contests = { /* тот же самый объект, что у вас */ };
+const contests = { /* тот же самый большой объект, что у вас */ };
 
 /* ======================  ЗАГРУЗКА КОНКУРСА  ====================== */
 function loadContest() {
@@ -315,7 +340,7 @@ function checkMatch() {
     document.getElementById('matchResult').textContent = `Вы соотнесли ${correctCount} из ${total} пар (ошибки красным).`;
     document.getElementById('matchResult').classList.remove('hidden');
     studentAnswers.push({ contest: 2, pairs: [...studentPairs], correctCount, total });
-    totalScore += correctCount;               // ← учитываем правильные пары
+    totalScore += correctCount;
     setTimeout(() => nextContest(), 2500);
 }
 
@@ -356,3 +381,6 @@ function showFinalResult() {
     stubContest.classList.add('hidden');
     resultBox.classList.remove('hidden');
 }
+
+/* ======================  КОНЕЦ DOMContentLoaded  ====================== */
+}); // закрываем document.addEventListener('DOMContentLoaded', () => {
