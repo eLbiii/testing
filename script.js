@@ -447,7 +447,7 @@ function nextRebusQuestion(questions) {
 
 /* ----------  МАТЧИНГ (цветные пары, отмена, проверка в конце)  ---------- */
 const pairColors = [
-    '#ffadad','#ffd6a5','#fdffb6','#caffbf','#9bf6ff',
+    '##0000FF','#ffd6a5','#fdffb6','#caffbf','#9bf6ff',
     '#a0c4ff','#bdb2ff','#ffc6ff','#fffffc','#d0d0d0'
 ];
 
@@ -626,6 +626,7 @@ function showFinalResult() {
     stubContest.classList.add('hidden');
     resultBox.classList.remove('hidden');
 }
+
 
 
 
