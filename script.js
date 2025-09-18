@@ -178,11 +178,11 @@ const contests = {
                 {
                     name: "Веб-разработка (3-4 курс)",
                     questions: [
-                        { q: "Какой тег отвечает за создание ссылки на другой сайт?", a: ["<link>", "<a>", "<href>", "<url>"], correct: 1 },
+                        { q: "Какой тег отвечает за создание ссылки на другой сайт?", a: ["link", "a", "href", "url"], correct: 1 },
                         { q: "Для чего используется CSS?", a: ["Для программирования логики сайта", "Для хранения данных пользователей", "Для оформления и стилизации внешнего вида сайта", "Для создания структуры сайта"], correct: 2 },
                         { q: "Какого цвета будет текст на кнопке?\n<button style=\"color: white; background-color: blue;\">Купить</button>", a: ["Синего", "Белого", "Черного", "Красного"], correct: 1 },
                         { q: "Для чего нужен JavaScript в веб-разработке?", a: ["Для описания структуры веб-страницы", "Для стилизации внешнего вида страницы", "Для добавления интерактивности (анимации, реакция на действия пользователя)", "Для хранения данных на сервере"], correct: 2 },
-                        { q: "Как сделать так, чтобы при нажатии на кнопку с id=\"myButton\" на экране появлялось сообщение \"Привет!\"?", a: ["document.getElementById(\"myButton\").style.display = \"Привет!\";", "document.getElementById(\"myButton\").onclick = function() { alert(\"Привет!\"); };", "<button id=\"myButton\" onshow=\"Привет!\">", "#myButton { content: \"Привет!\"; }"], correct: 1 }
+                        { q: "Какой из следующих методов не является методом HTTP?, a: ["connect", "link", "trace", "options"], correct: 1 }
                     ]
                 },
                 {
@@ -626,5 +626,6 @@ function showFinalResult() {
     stubContest.classList.add('hidden');
     resultBox.classList.remove('hidden');
 }
+
 
 
