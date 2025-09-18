@@ -619,16 +619,26 @@ function showFinalResult() {
         text = 'Это всего лишь один тест. Используйте его как возможность для обучения и улучшения своих знаний. Всё возможно!';
     }
     rTitle.textContent = title;
-    rText.textContent = text;
+    rText.textContent  = text;
+
+    /* =====  ВСТАВЛЯЕМ КАРТИНКУ НАД СЕРТИФИКАТОМ  ===== */
+    const diploma = document.getElementById('diploma');
+    // если картинка ещё не добавлена – вставляем
+    if (!diploma.querySelector('.diploma-img')) {
+        const img = document.createElement('img');
+        img.src = 'img/pr.png';
+        img.alt = 'Сертификат';
+        img.className = 'diploma-img';
+        img.style.width = '100%';
+        img.style.maxWidth = '400px';
+        img.style.display = 'block';
+        img.style.margin = '0 auto 1rem';
+        diploma.insertAdjacentElement('afterbegin', img);
+    }
 
     testContainer.classList.add('hidden');
     matchContest.classList.add('hidden');
     stubContest.classList.add('hidden');
     resultBox.classList.remove('hidden');
 }
-
-
-
-
-
 
