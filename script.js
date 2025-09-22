@@ -26,7 +26,8 @@ const matchData = [
 let userFio = '', userGroup = '', userCourse = '';
 let currentContest = 1;
 let currentQuestion = 0;
-let score = 0;
+let score = 0;           // 👈 счёт за ТЕКУЩИЙ конкурс
+let totalScore = 0;      // 👈 ОБЩИЙ счёт по ВСЕМ конкурсам
 let studentAnswers = []; // все ответы ученика
 let selectedPair = { logo: null, name: null };
 
@@ -44,6 +45,7 @@ loginForm.addEventListener('submit', e => {
 });
 
 /* ----------  КОНКУРСЫ  ---------- */
+// ... твоя структура contests без изменений ...
 const contests = {
     1: {
         title: "Конкурс 1 – Знатоки истории колледжа",
@@ -71,7 +73,7 @@ const contests = {
                     "Кибербезопасность",
                     "Анализ данных и бизнес-аналитика",
                     "Разработка программного обеспечения и игр"],
-                correct: [0, 1, 2], // индексы правильных
+                correct: [0, 1, 2],
                 type: 'checkbox'
             }
         ]
@@ -220,6 +222,27 @@ const contests = {
     }
 };
 
+/* ----------  ПОДСЧЁТ ОБЩЕГО КОЛИЧЕСТВА ВОПРОСОВ  ---------- */
+function getTotalQuestions() {
+    let total = 0;
+    for (let i = 1; i <= 5; i++) {
+        const contest = contests[i];
+        if (!contest) continue;
+
+        if (i === 5 && contest.directions) {
+            const dirs = contest.directions[userCourse];
+            if (dirs) {
+                total += dirs.flatMap(d => d.questions).length;
+            }
+        } else if (contest.questions) {
+            total += contest.questions.length;
+        } else if (i === 2) {
+            total += matchData.length; // 6 пар — 6 баллов максимум
+        }
+    }
+    return total;
+}
+
 /* ----------  ОСНОВНОЕ ПЕРЕКЛЮЧЕНИЕ КОНКУРСОВ  ---------- */
 function loadContest() {
     const contest = contests[currentContest];
@@ -241,17 +264,15 @@ function loadContest() {
         stubContest.classList.add('hidden');
         showRebusContest(contest.questions);
     } else if (contest.type === 'quiz' && contest.directions) {
-        // 5-й конкурс – выбираем направления по курсу
         const dirs = contest.directions[userCourse];
         if (!dirs) { nextContest(); return; }
         testContainer.classList.remove('hidden');
         matchContest.classList.add('hidden');
         stubContest.classList.add('hidden');
-        // объединяем все вопросы выбранного курса в один массив
         const questions = dirs.flatMap(d => d.questions);
         qTotal.textContent = questions.length;
         currentQuestion = 0;
-        score = 0;
+        score = 0; // 👈 сбрасываем счёт ТОЛЬКО текущего конкурса
         showQuizContest(questions);
     } else if (contest.type === 'stub') {
         testContainer.classList.add('hidden');
@@ -266,7 +287,7 @@ function loadContest() {
         const questions = contest.questions || contest.variants?.[userCourse] || [];
         qTotal.textContent = questions.length;
         currentQuestion = 0;
-        score = 0;
+        score = 0; // 👈 сбрасываем счёт ТОЛЬКО текущего конкурса
         showQuestion(questions);
     }
 }
@@ -279,7 +300,6 @@ function showQuestion(questions) {
     answers.innerHTML = '';
 
     if (q.type === 'checkbox') {
-        // множественный выбор
         q.a.forEach((txt, idx) => {
             const label = document.createElement('label');
             label.innerHTML = `<input type="checkbox" name="q" value="${idx}"> ${txt}`;
@@ -290,7 +310,6 @@ function showQuestion(questions) {
         btn.onclick = () => nextCheckboxQuestion(questions);
         answers.appendChild(btn);
     } else {
-        // одиночный выбор
         q.a.forEach((txt, idx) => {
             const label = document.createElement('label');
             label.innerHTML = `<input type="radio" name="q" value="${idx}"> ${txt}`;
@@ -314,7 +333,7 @@ function nextRadioQuestion(questions) {
 
 function nextCheckboxQuestion(questions) {
     const checked = Array.from(document.querySelectorAll('input[name="q"]:checked')).map(ch => parseInt(ch.value));
-    const correct = questions[currentQuestion].correct; // массив индексов
+    const correct = questions[currentQuestion].correct;
     const isPerfect = checked.length === correct.length && correct.every(i => checked.includes(i));
     studentAnswers.push({ contest: currentContest, question: currentQuestion, userAnswer: checked, correct });
 
@@ -331,7 +350,6 @@ function nextCheckboxQuestion(questions) {
 function showQuizContest(questions) {
     qTotal.textContent = questions.length;
     currentQuestion = 0;
-    score = 0;
     showQuizQuestion(questions);
 }
 
@@ -357,7 +375,7 @@ function nextQuizQuestion(questions) {
     if (currentQuestion < questions.length) {
         showQuizQuestion(questions);
     } else {
-        nextContest(); // идём дальше без диплома
+        nextContest();
     }
 }
 
@@ -412,13 +430,10 @@ function showRebusQuestion(questions) {
     qNum.textContent = currentQuestion + 1;
     qTitle.textContent = 'Разгадайте ребус';
 
-    // описание только перед ПЕРВЫМ ребусом
-    if (currentQuestion === 0) {
-        qTitle.insertAdjacentHTML('afterend', `
-        `);
-    }
+   if (currentQuestion === 0) {
+    qTitle.insertAdjacentHTML('afterend', `<p class="hint">Ответ можно вводить в любом регистре. Пробелы по краям будут удалены автоматически.</p>`);
+}
 
-    // картинка
     answers.innerHTML = `
         <img src="${q.img}" alt="ребус" class="rebus-img">
         <input type="text" id="rebusAnswer" placeholder="Ваш ответ" autocomplete="off">
@@ -432,20 +447,24 @@ function showRebusQuestion(questions) {
 }
 
 function nextRebusQuestion(questions) {
-    const userText = document.getElementById('rebusAnswer').value.trim();
+    const userText = document.getElementById('rebusAnswer').value.trim(); // ← .trim() уже есть
     const correct = questions[currentQuestion].correct;
     studentAnswers.push({ contest: currentContest, question: currentQuestion, userAnswer: userText, correct });
 
-    if (userText.toLowerCase() === correct.toLowerCase()) score++;
+    // Сравниваем без учёта регистра — работает с любой комбинацией заглавных/строчных букв
+    if (userText.toLowerCase() === correct.toLowerCase()) {
+        score++; // +1 балл за правильный ответ
+    }
+
     currentQuestion++;
     if (currentQuestion < questions.length) {
         showRebusQuestion(questions);
     } else {
-        nextContest();
+        nextContest(); // сохранит score в totalScore
     }
 }
 
-/* ----------  МАТЧИНГ (цветные пары, отмена, проверка в конце)  ---------- */
+/* ----------  МАТЧИНГ (конкурс 2)  ---------- */
 const pairColors = [
     '#0059ffff','#ffd6a5','#fdffb6','#caffbf','#9bf6ff',
     '#a0c4ff','#bdb2ff','#ffc6ff','#fffffc','#d0d0d0'
@@ -577,16 +596,18 @@ function checkMatch() {
     });
 
     const total = matchData.length;
-    document.getElementById('matchResult').textContent = `Вы соотнеси ${correctCount} из ${total} пар (ошибки красным).`;
+    document.getElementById('matchResult').textContent = `Вы соотнесли ${correctCount} из ${total} пар (ошибки красным).`;
     document.getElementById('matchResult').classList.remove('hidden');
 
     studentAnswers.push({ contest: 2, pairs: [...studentPairs], correctCount, total });
+    score = correctCount; // 👈 начисляем баллы за конкурс 2
 
     setTimeout(() => nextContest(), 2500);
 }
 
 /* ----------  ПЕРЕХОД МЕЖДУ КОНКУРСАМИ  ---------- */
 function nextContest() {
+    totalScore += score; // 👈 сохраняем баллы этого конкурса в общий счёт
     currentContest++;
     if (currentContest > 5) {
         showFinalResult();
@@ -595,14 +616,14 @@ function nextContest() {
     }
 }
 
-/* ----------  ИТОГОВАЯ ГРАМОТА (после 5-го)  ---------- */
+/* ----------  ИТОГОВАЯ ГРАМОТА  ---------- */
 function showFinalResult() {
-    const totalQuestions = 46;          // всего вопросов в любом случае
-    const percent = Math.round((score / totalQuestions) * 100) || 0;
+    const totalQuestions = getTotalQuestions(); // 👈 динамический подсчёт!
+    const percent = Math.round((totalScore / totalQuestions) * 100) || 0;
 
     dFio.textContent = userFio;
     dGroup.textContent = userGroup;
-    dScore.textContent = `${percent} % (${score} / ${totalQuestions})`;
+    dScore.textContent = `${percent} % (${totalScore} / ${totalQuestions})`;
 
     let title = '', text = '';
     if (percent >= 86) {
@@ -623,7 +644,6 @@ function showFinalResult() {
 
     /* =====  ВСТАВЛЯЕМ КАРТИНКУ НАД СЕРТИФИКАТОМ  ===== */
     const diploma = document.getElementById('diploma');
-    // если картинка ещё не добавлена – вставляем
     if (!diploma.querySelector('.diploma-img')) {
         const img = document.createElement('img');
         img.src = 'img/pr.png';
@@ -641,4 +661,3 @@ function showFinalResult() {
     stubContest.classList.add('hidden');
     resultBox.classList.remove('hidden');
 }
-
